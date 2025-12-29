@@ -315,6 +315,7 @@ async function syncFromDatabase() {
         const local = await fetch('/data/fandom_roster.json');
         if (local.ok) {
           const body = await local.json();
+          console.log('Using local fandom data', (body.killers||[]).length, (body.survivors||[]).length);
           liveKillers = body.killers || [];
           liveSurvivors = body.survivors || [];
           renderSyncSummary(liveKillers, liveSurvivors);
