@@ -38,7 +38,7 @@ const puppeteer = require('puppeteer');
         const el = await page.$(sel);
         if (el) {
           await el.click();
-          await page.waitForTimeout(500);
+          await new Promise(r => setTimeout(r, 500));
         } else {
           out.push({type:'missing', selector: sel});
           console.log('MISSING ELEMENT:', sel);
