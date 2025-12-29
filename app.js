@@ -257,6 +257,36 @@ function renderSyncPlaceholder() {
 let liveKillers = [];
 let liveSurvivors = [];
 
+async function fetchFandomRoster(type) {
+  // type: 'Killers' or 'Survivors'
+  const cat = `Category:${type}`;
+  // Get up to 500 pages in the category
+  const api = `https://deadbydaylight.fandom.com/api.php?action=query&format=json&list=categorymembers&cmtitle=${encodeURIComponent(cat)}&cmlimit=500`;
+  const res = await fetch(api);
+  if (!res.ok) throw new Error(`Fandom category fetch HTTP ${res.status}`);
+  const body = await res.json();
+  const pages = (body.query && body.query.categorymembers) || [];
+  // filter out subcategories
+  const filtered = pages.filter(p => !p.title.startsWith('Category:')).map(p => p.title);
+
+  // For each title, fetch thumbnail if available
+  const results = await Promise.all(filtered.map(async title => {
+    try {
+      const q = encodeURIComponent(title.replace(/\s+/g, '_'));
+      const imgApi = `https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=${q}`;
+      const r = await fetch(imgApi);
+      if (!r.ok) return { name: title };
+      const b = await r.json();
+      const page = Object.values(b.query.pages)[0];
+      const thumb = page && page.thumbnail && page.thumbnail.source;
+      return { name: title, iconURL: thumb || null };
+    } catch (e) {
+      return { name: title };
+    }
+  }));
+  return results;
+}
+
 async function syncFromDatabase() {
   syncStatus.textContent = "Syncing from Techial's DBD-Database…";
   try {
@@ -270,7 +300,20 @@ async function syncFromDatabase() {
     renderSyncSummary(killerData, survivorData);
     syncStatus.textContent = "Synced live from Techial's DBD-Database (wiki-updated).";
   } catch (error) {
-    syncStatus.textContent = `Sync failed — still showing curated data. (${error.message})`;
+    // Try MediaWiki fallback
+    try {
+      const [killerData, survivorData] = await Promise.all([
+        fetchFandomRoster('Killers'),
+        fetchFandomRoster('Survivors')
+      ]);
+      liveKillers = killerData;
+      liveSurvivors = survivorData;
+      renderSyncSummary(killerData, survivorData);
+      syncStatus.textContent = "Synced from Fandom (fallback) — data may be less structured.";
+      return;
+    } catch (e) {
+      syncStatus.textContent = `Sync failed — still showing curated data. (${error.message})`;
+    }
   }
 }
 
