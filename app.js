@@ -711,22 +711,27 @@ function initPlanner() {
 }
 
 function attachListeners() {
-  searchInput.addEventListener("input", e => {
-    state.search = e.target.value.toLowerCase();
-    renderKillers();
-  });
-  difficultySelect.addEventListener("change", e => {
-    state.difficulty = e.target.value;
-    renderKillers();
-  });
-  comfortToggle.addEventListener("change", e => {
-    state.comfort = e.target.checked;
-    renderKillers();
-  });
-  soloToggle.addEventListener("change", e => {
-    state.solo = e.target.checked;
-    renderKillers();
-  });
+  try {
+    if (searchInput) searchInput.addEventListener("input", e => {
+      state.search = e.target.value.toLowerCase();
+      renderKillers();
+    });
+    if (difficultySelect) difficultySelect.addEventListener("change", e => {
+      state.difficulty = e.target.value;
+      renderKillers();
+    });
+    if (comfortToggle) comfortToggle.addEventListener("change", e => {
+      state.comfort = e.target.checked;
+      renderKillers();
+    });
+    if (soloToggle) soloToggle.addEventListener("change", e => {
+      state.solo = e.target.checked;
+      renderKillers();
+    });
+  } catch (err) {
+    console.error('attachListeners failed', err);
+    if (syncStatus) syncStatus.textContent = `JS init error — check console: ${err.message}`;
+  }
 }
 
 function initLiveSync() {
@@ -749,13 +754,30 @@ function initLiveSync() {
 }
 
 function init() {
-  buildArchetypeFilters();
-  renderPerkIdeas();
-  attachListeners();
-  renderKillers();
-  initPlanner();
-  initLiveSync();
-  initRandomizer();
+  try {
+    // helpful debug log so we can tell whether the script executed
+    console.log('app.js init');
+    buildArchetypeFilters();
+    renderPerkIdeas();
+    attachListeners();
+    renderKillers();
+    initPlanner();
+    initLiveSync();
+    initRandomizer();
+  } catch (err) {
+    console.error('init failed', err);
+    if (syncStatus) syncStatus.textContent = `JS init failed — check console: ${err.message}`;
+  }
 }
+
+// Global error handlers to display errors on page so users can see why buttons might be broken
+window.addEventListener('error', ev => {
+  console.error('Runtime error', ev.error || ev.message);
+  if (syncStatus) syncStatus.textContent = `Runtime error: ${ev.error?.message || ev.message}`;
+});
+window.addEventListener('unhandledrejection', ev => {
+  console.error('Unhandled rejection', ev.reason);
+  if (syncStatus) syncStatus.textContent = `Unhandled promise: ${ev.reason?.message || ev.reason}`;
+});
 
 init();
