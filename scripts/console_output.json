@@ -1,0 +1,324 @@
+[
+  {
+    "type": "console",
+    "text": "app.js init"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 404 (File not found)"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 404 (File not found)"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 404 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 404 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 404 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 404 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 404 (File not found)"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 403 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 403 ()"
+  },
+  {
+    "type": "console",
+    "text": "Access to fetch at 'https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=Anti-tunnel_safety_net&origin=*' from origin 'http://localhost:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+  },
+  {
+    "type": "requestfailed",
+    "url": "https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=Anti-tunnel_safety_net&origin=*",
+    "statusText": "net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Using local fandom data 1 46"
+  },
+  {
+    "type": "console",
+    "text": "Access to fetch at 'https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=Gen_bully&origin=*' from origin 'http://localhost:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+  },
+  {
+    "type": "requestfailed",
+    "url": "https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=Gen_bully&origin=*",
+    "statusText": "net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Access to fetch at 'https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=Stealth_rescuer&origin=*' from origin 'http://localhost:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+  },
+  {
+    "type": "requestfailed",
+    "url": "https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=Stealth_rescuer&origin=*",
+    "statusText": "net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Access to fetch at 'https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=Chase_gremlin&origin=*' from origin 'http://localhost:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+  },
+  {
+    "type": "requestfailed",
+    "url": "https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=Chase_gremlin&origin=*",
+    "statusText": "net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 403 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 403 ()"
+  },
+  {
+    "type": "console",
+    "text": "Access to fetch at 'https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=The_Trapper&origin=*' from origin 'http://localhost:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+  },
+  {
+    "type": "requestfailed",
+    "url": "https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=The_Trapper&origin=*",
+    "statusText": "net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Access to fetch at 'https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=The_Huntress&origin=*' from origin 'http://localhost:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+  },
+  {
+    "type": "requestfailed",
+    "url": "https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=The_Huntress&origin=*",
+    "statusText": "net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Access to fetch at 'https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=The_Spirit&origin=*' from origin 'http://localhost:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+  },
+  {
+    "type": "requestfailed",
+    "url": "https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=The_Spirit&origin=*",
+    "statusText": "net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Access to fetch at 'https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=The_Nurse&origin=*' from origin 'http://localhost:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+  },
+  {
+    "type": "requestfailed",
+    "url": "https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=The_Nurse&origin=*",
+    "statusText": "net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Access to fetch at 'https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=The_Wraith&origin=*' from origin 'http://localhost:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+  },
+  {
+    "type": "requestfailed",
+    "url": "https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=The_Wraith&origin=*",
+    "statusText": "net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Access to fetch at 'https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=The_Xenomorph&origin=*' from origin 'http://localhost:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+  },
+  {
+    "type": "requestfailed",
+    "url": "https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=The_Xenomorph&origin=*",
+    "statusText": "net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Access to fetch at 'https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=The_Unknown&origin=*' from origin 'http://localhost:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+  },
+  {
+    "type": "requestfailed",
+    "url": "https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=The_Unknown&origin=*",
+    "statusText": "net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Access to fetch at 'https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=The_Singularity&origin=*' from origin 'http://localhost:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+  },
+  {
+    "type": "requestfailed",
+    "url": "https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=The_Singularity&origin=*",
+    "statusText": "net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Access to fetch at 'https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=David_King&origin=*' from origin 'http://localhost:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+  },
+  {
+    "type": "requestfailed",
+    "url": "https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=David_King&origin=*",
+    "statusText": "net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 404 (File not found)"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 404 (File not found)"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 404 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 404 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 404 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 404 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 403 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 403 ()"
+  },
+  {
+    "type": "console",
+    "text": "Using local fandom data 1 46"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 403 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 403 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 403 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 403 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 403 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 403 ()"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 403 ()"
+  },
+  {
+    "type": "console",
+    "text": "Access to fetch at 'https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=Nea_Karlsson&origin=*' from origin 'http://localhost:8000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+  },
+  {
+    "type": "requestfailed",
+    "url": "https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=Nea_Karlsson&origin=*",
+    "statusText": "net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: net::ERR_FAILED"
+  },
+  {
+    "type": "console",
+    "text": "Failed to load resource: the server responded with a status of 403 ()"
+  },
+  {
+    "type": "dom",
+    "selector": "#sync-status",
+    "text": "Synced from local Fandom data (build-time)."
+  },
+  {
+    "type": "dom",
+    "selector": ".killer-card",
+    "count": 1
+  },
+  {
+    "type": "dom",
+    "selector": "#random-killer-card",
+    "text": "KillerThe WraithHyperfocusDead HardVigilProve ThyselfItem / Addon: NoneCopy build"
+  },
+  {
+    "type": "dom",
+    "selector": "#random-survivor-card",
+    "text": "SurvivorNea KarlssonSelf-CareBalanced LandingEmpathyInner StrengthItem / Addon: ToolboxCopy build"
+  }
+]
