@@ -19,7 +19,7 @@ const puppeteer = require('puppeteer');
     console.log('REQUEST FAILED:', req.url(), req.failure().errorText);
   });
 
-  const url = 'https://ErizY.github.io/deadbydaylight/';
+  const url = process.env.TEST_URL || 'https://ErizY.github.io/deadbydaylight/';
   await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
 
   // Wait a bit
@@ -55,6 +55,10 @@ const puppeteer = require('puppeteer');
   out.push({type:'dom', selector:'#sync-status', text: syncStatus});
   const killerCount = await page.$$eval('.killer-card', els => els.length).catch(()=>null);
   out.push({type:'dom', selector:'.killer-card', count: killerCount});
+  const killerBuild = await page.$eval('#random-killer-card', el => el.textContent).catch(()=>null);
+  const survivorBuild = await page.$eval('#random-survivor-card', el => el.textContent).catch(()=>null);
+  out.push({type:'dom', selector:'#random-killer-card', text: killerBuild});
+  out.push({type:'dom', selector:'#random-survivor-card', text: survivorBuild});
 
   // Save to file
   fs.writeFileSync('scripts/console_output.json', JSON.stringify(out, null, 2));
