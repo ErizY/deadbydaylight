@@ -1,8 +1,23 @@
 # Fog Academy: Dead by Daylight Counter Guide
 
+> Quick note: Because the Fandom API blocks browser-origin requests (CORS), this project includes a build-time helper to pre-fetch wiki rosters and thumbnails. Run the script below locally or in your CI workflow to generate `data/fandom_roster.json` that the site will use as a fallback.
+
+
 A lightweight, single-page, interactive guide that explains how to counter every Dead by Daylight killer and suggests perk synergies/loadouts for different playstyles.
 
 ## Getting started
+
+### Pre-fetch live wiki data (recommended)
+
+To avoid runtime CORS issues when calling the Fandom API from a browser, run the included script to pre-fetch roster data and thumbnails at build time. This works well in CI (GitHub Actions, Netlify build hook, etc.) and keeps the site static and reliable.
+
+```bash
+npm run fetch:fandom
+# writes `data/fandom_roster.json` with `killers` and `survivors` arrays
+```
+
+If you prefer not to run the script, the site will try live fallbacks (GitHub raw files -> GitHub API -> Fandom API), but client-side Fandom API calls may be blocked by CORS.
+
 
 This project is pure HTML/CSS/JS—no build step. Open `index.html` directly or serve the folder with your preferred static server.
 

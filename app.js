@@ -173,6 +173,14 @@ const planNotes = {
 };
 
 async function fetchFromDatabase(path) {
+  // Prefer local data if present (populated by build-time fetcher)
+  try {
+    const local = await fetch(`/data/${path}`);
+    if (local.ok) return await local.json();
+  } catch (e) {
+    // ignore local file errors
+  }
+
   // Try raw GitHub raw content first, then fall back to GitHub API contents endpoint
   let lastError = new Error("No sources reached");
   // Try raw bases
@@ -300,8 +308,23 @@ async function syncFromDatabase() {
     renderSyncSummary(killerData, survivorData);
     syncStatus.textContent = "Synced live from Techial's DBD-Database (wiki-updated).";
   } catch (error) {
-    // Try MediaWiki fallback
+    // Try MediaWiki fallback (prefer local pre-fetched data to avoid CORS issues)
     try {
+      // attempt local fandom data first
+      try {
+        const local = await fetch('/data/fandom_roster.json');
+        if (local.ok) {
+          const body = await local.json();
+          liveKillers = body.killers || [];
+          liveSurvivors = body.survivors || [];
+          renderSyncSummary(liveKillers, liveSurvivors);
+          syncStatus.textContent = "Synced from local Fandom data (build-time).";
+          return;
+        }
+      } catch (localErr) {
+        // ignore and fall back to live API fetch
+      }
+
       const [killerData, survivorData] = await Promise.all([
         fetchFandomRoster('Killers'),
         fetchFandomRoster('Survivors')
@@ -312,7 +335,7 @@ async function syncFromDatabase() {
       syncStatus.textContent = "Synced from Fandom (fallback) — data may be less structured.";
       return;
     } catch (e) {
-      syncStatus.textContent = `Sync failed — still showing curated data. (${error.message})`;
+      syncStatus.textContent = `Sync failed — still showing curated data. (${error.message}). Try running 'npm run fetch:fandom' to pre-populate local data (CI-friendly).`;
     }
   }
 }
@@ -385,14 +408,26 @@ function processImageQueue() {
 
 function fetchFandomImage(title) {
   if (!title) return Promise.resolve(null);
+  // First try cache
   if (imageCache.has(title)) return Promise.resolve(imageCache.get(title));
-  if (imagePending.has(title)) return imagePending.get(title);
-  const promise = new Promise(resolve => {
-    imageQueue.push({ title, resolve });
-    processImageQueue();
-  }).then(res => { imagePending.delete(title); return res; });
-  imagePending.set(title, promise);
-  return promise;
+  // Construct a MediaWiki redirect URL which images can load as <img src=> without CORS
+  const q = title.replace(/\s+/g, '_');
+  const redirectUrl = `https://deadbydaylight.fandom.com/wiki/Special:Redirect/file/${encodeURIComponent(q)}`;
+  // store a tentative redirect URL to avoid duplicate attempts
+  imageCache.set(title, redirectUrl);
+
+  // Still attempt a proper API lookup via queue to get a thumbnail when possible, but don't reject on failure
+  if (!imagePending.has(title)) {
+    const promise = new Promise(resolve => {
+      imageQueue.push({ title, resolve });
+      processImageQueue();
+    }).then(res => { imagePending.delete(title); return res; });
+    imagePending.set(title, promise);
+    // fire and forget: when the queued result resolves, update cache to real thumbnail if found
+    promise.then(real => { if (real) imageCache.set(title, real); }).catch(()=>{});
+  }
+
+  return Promise.resolve(redirectUrl);
 }
 
 function buildArchetypeFilters() {

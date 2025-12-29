@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "fetch:fandom": "node scripts/fetch_fandom_roster.js"
+  },
+  "dependencies": {
+    "puppeteer": "^24.34.0"
+  }
+}
