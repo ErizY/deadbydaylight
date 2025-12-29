@@ -564,6 +564,40 @@ function buildPlan(killerName) {
     randomItem(planNotes.items),
     randomItem(planNotes.communication)
   ];
+
+  const plan = document.createElement("div");
+  // build plan content with image placeholder
+  plan.innerHTML = `
+    <div style="display:flex;gap:12px;align-items:center;">
+      <div id="plan-img"></div>
+      <div>
+        <h3>${killer.name} counter plan</h3>
+        <p class="card-body">${killer.approach}</p>
+      </div>
+    </div>
+    <div class="plan-highlights">
+      ${highlights.map(text => `<div class="plan-pill">${text}</div>`).join("")}
+    </div>
+    <ul>
+      ${killer.counters.map(c => `<li><strong>${c.label}:</strong> ${c.detail}</li>`).join("")}
+    </ul>
+    <p><strong>Perk swap:</strong> ${killer.perks}</p>
+  `;
+
+  // set plan image
+  const planImgWrap = plan.querySelector('#plan-img');
+  const planImg = document.createElement('img');
+  planImg.alt = killer.name;
+  planImg.loading = 'lazy';
+  planImg.style.width = '96px';
+  planImg.style.height = '96px';
+  planImg.style.objectFit = 'cover';
+  planImg.style.borderRadius = '12px';
+  planImgWrap.appendChild(planImg);
+  fetchFandomImage(killer.name).then(url => { planImg.src = url || 'assets/placeholder.svg'; }).catch(() => planImg.src = 'assets/placeholder.svg');
+
+  planCard.innerHTML = "";
+  planCard.appendChild(plan);
 }
 
 // --- Build randomiser helpers & UI ---
@@ -664,7 +698,6 @@ function initRandomizer() {
   buildRandomSurvivorBuild();
 }
 
-  const plan = document.createElement("div");
   // build plan content with image placeholder
   plan.innerHTML = `
     <div style="display:flex;gap:12px;align-items:center;">
@@ -697,7 +730,6 @@ function initRandomizer() {
 
   planCard.innerHTML = "";
   planCard.appendChild(plan);
-}
 
 function initPlanner() {
   renderPlannerOptions();
