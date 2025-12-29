@@ -173,16 +173,37 @@ const planNotes = {
 };
 
 async function fetchFromDatabase(path) {
+  // Try raw GitHub raw content first, then fall back to GitHub API contents endpoint
   let lastError = new Error("No sources reached");
+  // Try raw bases
   for (const base of dbdDatabaseSources) {
     try {
       const res = await fetch(`${base}${path}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
+      // Some raw endpoints may return text; try parse safely
+      const contentType = res.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) return await res.json();
+      const txt = await res.text();
+      try { return JSON.parse(txt); } catch (e) { throw new Error("Invalid JSON from raw source"); }
     } catch (err) {
       lastError = err;
     }
   }
+
+  // Fallback: use GitHub API to fetch file contents (base64 encoded)
+  try {
+    const apiUrl = `https://api.github.com/repos/Techial/DBD-Database/contents/data/${path}`;
+    const res = await fetch(apiUrl, { headers: { Accept: "application/vnd.github.v3+json" } });
+    if (!res.ok) throw new Error(`GitHub API HTTP ${res.status}`);
+    const body = await res.json();
+    if (!body.content) throw new Error("No content in GitHub API response");
+    // Decode base64 content
+    const decoded = atob(body.content.replace(/\n/g, ""));
+    return JSON.parse(decoded);
+  } catch (err) {
+    lastError = err;
+  }
+
   throw lastError;
 }
 
@@ -233,6 +254,9 @@ function renderSyncPlaceholder() {
   `;
 }
 
+let liveKillers = [];
+let liveSurvivors = [];
+
 async function syncFromDatabase() {
   syncStatus.textContent = "Syncing from Techial's DBD-Database…";
   try {
@@ -240,6 +264,9 @@ async function syncFromDatabase() {
       fetchFromDatabase("killers.json"),
       fetchFromDatabase("survivors.json")
     ]);
+    // normalize for storage
+    liveKillers = Array.isArray(killerData) ? killerData : killerData?.killers || [];
+    liveSurvivors = Array.isArray(survivorData) ? survivorData : survivorData?.survivors || [];
     renderSyncSummary(killerData, survivorData);
     syncStatus.textContent = "Synced live from Techial's DBD-Database (wiki-updated).";
   } catch (error) {
@@ -274,6 +301,56 @@ const dbdDatabaseSources = [
   "https://raw.githubusercontent.com/Techial/DBD-Database/main/data/",
   "https://raw.githubusercontent.com/Techial/DBD-Database/master/data/"
 ];
+
+// Simple in-memory cache for fetched images to avoid repeated network calls
+const imageCache = new Map();
+
+const IMAGE_CONCURRENCY = 4;
+const imageQueue = [];
+let imageInFlight = 0;
+const imagePending = new Map();
+
+function processImageQueue() {
+  if (imageInFlight >= IMAGE_CONCURRENCY || imageQueue.length === 0) return;
+  const { title, resolve } = imageQueue.shift();
+  imageInFlight++;
+  (async () => {
+    try {
+      const q = encodeURIComponent(title.replace(/\s+/g, "_"));
+      const url = `https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=${q}`;
+      const res = await fetch(url);
+      let thumb = null;
+      if (res.ok) {
+        const body = await res.json();
+        const pages = body.query && body.query.pages;
+        const page = pages && Object.values(pages)[0];
+        thumb = page && (page.thumbnail && page.thumbnail.source) || null;
+      }
+      imageCache.set(title, thumb);
+      resolve(thumb);
+    } catch (err) {
+      imageCache.set(title, null);
+      resolve(null);
+    } finally {
+      imageInFlight--;
+      processImageQueue();
+    }
+  })();
+  // try to fill additional free slots
+  processImageQueue();
+}
+
+function fetchFandomImage(title) {
+  if (!title) return Promise.resolve(null);
+  if (imageCache.has(title)) return Promise.resolve(imageCache.get(title));
+  if (imagePending.has(title)) return imagePending.get(title);
+  const promise = new Promise(resolve => {
+    imageQueue.push({ title, resolve });
+    processImageQueue();
+  }).then(res => { imagePending.delete(title); return res; });
+  imagePending.set(title, promise);
+  return promise;
+}
 
 function buildArchetypeFilters() {
   archetypeList.forEach(type => {
@@ -327,6 +404,18 @@ function renderKillers() {
     card.className = "killer-card";
 
     const header = document.createElement("header");
+    // image placeholder
+    const imgWrap = document.createElement('div');
+    imgWrap.className = 'killer-image';
+    const img = document.createElement('img');
+    img.alt = killer.name;
+    img.loading = 'lazy';
+    img.style.width = '80px';
+    img.style.height = '80px';
+    img.style.objectFit = 'cover';
+    img.style.borderRadius = '10px';
+    img.style.marginRight = '12px';
+    imgWrap.appendChild(img);
     const title = document.createElement("div");
     title.innerHTML = `<p class="eyebrow">${killer.title}</p><h3 class="card-title">${killer.name}</h3>`;
     const meta = document.createElement("div");
@@ -341,7 +430,12 @@ function renderKillers() {
       span.textContent = type;
       meta.appendChild(span);
     });
-    header.append(title, meta);
+    header.append(imgWrap, title, meta);
+
+    // fetch and set image asynchronously
+    fetchFandomImage(killer.name).then(url => {
+      img.src = url || 'assets/placeholder.svg';
+    }).catch(() => { img.src = 'assets/placeholder.svg'; });
 
     const approach = document.createElement("p");
     approach.className = "card-body";
@@ -365,6 +459,28 @@ function renderPerkIdeas() {
     const card = document.createElement("div");
     card.className = "perk-card";
     card.onclick = () => navigator.clipboard?.writeText(`${idea.name}: ${idea.perks.join(", ")}`);
+
+    // thumbnail for the idea (try idea name then first perk name)
+    const thumbWrap = document.createElement('div');
+    thumbWrap.style.display = 'flex';
+    thumbWrap.style.justifyContent = 'flex-end';
+    const thumb = document.createElement('img');
+    thumb.alt = idea.name;
+    thumb.loading = 'lazy';
+    thumb.style.width = '48px';
+    thumb.style.height = '48px';
+    thumb.style.objectFit = 'cover';
+    thumb.style.borderRadius = '8px';
+    thumb.style.marginLeft = 'auto';
+    thumbWrap.appendChild(thumb);
+    card.appendChild(thumbWrap);
+
+    (async () => {
+      const primary = idea.name || idea.perks?.[0];
+      const url = await fetchFandomImage(primary);
+      thumb.src = url || 'assets/placeholder.svg';
+      if (!url) thumb.classList.add('placeholder');
+    })();
 
     const badge = document.createElement("div");
     badge.className = "badge";
@@ -405,11 +521,116 @@ function buildPlan(killerName) {
     randomItem(planNotes.items),
     randomItem(planNotes.communication)
   ];
+}
+
+// --- Build randomiser helpers & UI ---
+const survivorsCurated = ["Dwight Fairfield", "Meg Thomas", "Claudette Morel", "Jake Park", "Nea Karlsson", "David King", "Laurie Strode"];
+const survivorPerks = ["Self-Care", "Decisive Strike", "Borrowed Time", "Empathy", "We'll Make It", "Adrenaline", "Deliverance", "Iron Will", "Balanced Landing", "Inner Strength"];
+const survivorItems = ["Med-Kit", "Toolbox", "Flashlight", "Key", "Map", "Flashlight (Yellow)", "Brown Med-Kit", "Screwdriver"];
+const killerAddons = ["None", "Rare Addon", "Uncommon Addon", "Power Addon"];
+
+function randomUnique(list, count) {
+  const copy = Array.from(new Set(list));
+  const out = [];
+  while (out.length < count && copy.length) {
+    const i = Math.floor(Math.random() * copy.length);
+    out.push(copy.splice(i,1)[0]);
+  }
+  return out;
+}
+
+function renderBuildCard(containerId, title, name, imageUrl, perks, item) {
+  const wrap = document.getElementById(containerId);
+  wrap.innerHTML = "";
+
+  const card = document.createElement('div');
+  card.className = 'random-build';
+
+  const header = document.createElement('div');
+  header.className = 'random-build-header';
+
+  const img = document.createElement('img');
+  img.alt = name;
+  img.loading = 'lazy';
+  img.src = imageUrl || 'assets/placeholder.svg';
+  img.className = imageUrl ? '' : 'placeholder';
+
+  const info = document.createElement('div');
+  info.innerHTML = `<h4>${title}</h4><strong>${name}</strong>`;
+
+  header.appendChild(img);
+  header.appendChild(info);
+
+  const perksWrap = document.createElement('div');
+  perksWrap.className = 'build-perks';
+  perks.forEach(p => {
+    const span = document.createElement('span');
+    span.className = 'perk-pill';
+    span.textContent = p;
+    perksWrap.appendChild(span);
+  });
+
+  const itemWrap = document.createElement('div');
+  itemWrap.className = 'build-item';
+  itemWrap.textContent = `Item / Addon: ${item}`;
+
+  const copyBtn = document.createElement('button');
+  copyBtn.className = 'secondary';
+  copyBtn.textContent = 'Copy build';
+  copyBtn.onclick = () => {
+    const text = `${title} - ${name}: Perks: ${perks.join(', ')}; ${item}`;
+    navigator.clipboard?.writeText(text);
+    copyBtn.textContent = 'Copied!';
+    setTimeout(() => (copyBtn.textContent = 'Copy build'), 1400);
+  };
+
+  card.appendChild(header);
+  card.appendChild(perksWrap);
+  card.appendChild(itemWrap);
+  card.appendChild(copyBtn);
+
+  wrap.appendChild(card);
+}
+
+async function buildRandomKillerBuild() {
+  const choice = randomItem(killers);
+  const basePerks = (choice.perks || '').split('+').map(s=>s.trim()).filter(Boolean);
+  const extraPerks = perkIdeas.flatMap(p => p.perks);
+  const pool = Array.from(new Set([...basePerks, ...extraPerks]));
+  const perks = randomUnique(pool, 4);
+  const item = randomItem(killerAddons);
+  const img = await fetchFandomImage(choice.name);
+  renderBuildCard('random-killer-card', 'Killer', choice.name, img, perks, item);
+}
+
+async function buildRandomSurvivorBuild() {
+  const live = liveSurvivors && liveSurvivors.length ? liveSurvivors.map(s => normalizeName(s)).filter(Boolean) : [];
+  const source = live.length ? live : survivorsCurated;
+  const choice = randomItem(source);
+  const perks = randomUnique(survivorPerks, 4);
+  const item = randomItem(survivorItems);
+  const img = await fetchFandomImage(choice);
+  renderBuildCard('random-survivor-card', 'Survivor', choice, img, perks, item);
+}
+
+function initRandomizer() {
+  document.getElementById('randomize-killer').addEventListener('click', buildRandomKillerBuild);
+  document.getElementById('randomize-survivor').addEventListener('click', buildRandomSurvivorBuild);
+  // show an initial sample
+  buildRandomKillerBuild();
+  buildRandomSurvivorBuild();
+}
 
   const plan = document.createElement("div");
+  // build plan content with image placeholder
   plan.innerHTML = `
-    <h3>${killer.name} counter plan</h3>
-    <p class="card-body">${killer.approach}</p>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <div id="plan-img"></div>
+      <div>
+        <h3>${killer.name} counter plan</h3>
+        <p class="card-body">${killer.approach}</p>
+      </div>
+    </div>
     <div class="plan-highlights">
       ${highlights.map(text => `<div class="plan-pill">${text}</div>`).join("")}
     </div>
@@ -418,6 +639,18 @@ function buildPlan(killerName) {
     </ul>
     <p><strong>Perk swap:</strong> ${killer.perks}</p>
   `;
+
+  // set plan image
+  const planImgWrap = plan.querySelector('#plan-img');
+  const planImg = document.createElement('img');
+  planImg.alt = killer.name;
+  planImg.loading = 'lazy';
+  planImg.style.width = '96px';
+  planImg.style.height = '96px';
+  planImg.style.objectFit = 'cover';
+  planImg.style.borderRadius = '12px';
+  planImgWrap.appendChild(planImg);
+  fetchFandomImage(killer.name).then(url => { planImg.src = url || 'assets/placeholder.svg'; }).catch(() => planImg.src = 'assets/placeholder.svg');
 
   planCard.innerHTML = "";
   planCard.appendChild(plan);
@@ -460,6 +693,16 @@ function initLiveSync() {
       syncFromDatabase();
     });
   }
+  // Attempt an automatic sync on load and periodically every 10 minutes
+  // Keep this quiet: update status text while syncing.
+  (async () => {
+    try {
+      await syncFromDatabase();
+    } catch (e) {
+      // errors are handled inside syncFromDatabase
+    }
+    setInterval(() => syncFromDatabase(), 10 * 60 * 1000);
+  })();
 }
 
 function init() {
@@ -469,6 +712,7 @@ function init() {
   renderKillers();
   initPlanner();
   initLiveSync();
+  initRandomizer();
 }
 
 init();

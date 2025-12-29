@@ -102,6 +102,22 @@ main { padding: 24px; max-width: 1200px; margin: 0 auto 80px; }
 .killer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-top: 18px; }
 .killer-card { background: var(--panel); border: 1px solid var(--stroke); border-radius: 14px; padding: 16px; display: grid; gap: 8px; box-shadow: 0 12px 40px rgba(0,0,0,0.18); }
 .killer-card header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+/* Thumbnail styling for fetched images */
+.killer-image { display: flex; align-items: center; }
+.killer-image img { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; margin-right: 12px; flex-shrink: 0; border: 1px solid var(--stroke); background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08)); }
+
+/* Perk card thumbnail in corner */
+.perk-card img { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; border: 1px solid var(--stroke); background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)); }
+
+/* Planner image */
+.plan-card img { width: 96px; height: 96px; object-fit: cover; border-radius: 12px; border: 1px solid var(--stroke); background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)); }
+
+/* Subtle image hover pop */
+.killer-image img:hover, .perk-card img:hover, .plan-card img:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.35); transition: transform 0.18s ease, box-shadow 0.18s ease; }
+
+/* Style for placeholder thumbnails */
+img.placeholder { filter: saturate(0.25) brightness(0.95); opacity: 0.96; }
+
 .tag { font-size: 12px; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--stroke); color: var(--muted); }
 .tag.difficulty { border-color: rgba(255,255,255,0.16); }
 .meta { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -117,6 +133,21 @@ main { padding: 24px; max-width: 1200px; margin: 0 auto 80px; }
 .perk-card { background: var(--panel); border: 1px solid var(--stroke); border-radius: 14px; padding: 14px; display: grid; gap: 8px; cursor: pointer; transition: transform 0.15s ease, border 0.15s ease; }
 .perk-card:hover { transform: translateY(-4px); border-color: var(--accent); }
 .perk-card .badge { background: rgba(98, 230, 255, 0.15); color: #c8f5ff; padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(98, 230, 255, 0.4); width: fit-content; }
+
+/* Randomizer styles */
+.randomizer-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-top: 12px; }
+.random-block { display: flex; flex-direction: column; gap: 12px; }
+.build-card { min-height: 120px; display: flex; align-items: center; justify-content: center; color: var(--muted); }
+.random-build { display: grid; gap: 10px; }
+.random-build-header { display:flex; gap:12px; align-items:center; }
+.random-build img { width:72px; height:72px; object-fit:cover; border-radius:10px; border:1px solid var(--stroke); }
+.build-perks { display:flex; gap:8px; flex-wrap:wrap; }
+.perk-pill { background: var(--panel-strong); color: var(--text); padding:6px 10px; border-radius:999px; border:1px solid var(--stroke); font-weight:700; }
+.build-item { color: var(--muted); }
+.random-block .cta { align-self:flex-start; }
+@media (max-width: 900px) {
+  .randomizer-row { grid-template-columns: 1fr; }
+}
 
 .planner__controls { display: flex; gap: 10px; align-items: center; margin: 12px 0; }
 .planner__controls select { background: var(--panel-strong); color: var(--text); border: 1px solid var(--stroke); border-radius: 10px; padding: 12px 14px; min-width: 220px; }
