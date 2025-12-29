@@ -261,7 +261,7 @@ async function fetchFandomRoster(type) {
   // type: 'Killers' or 'Survivors'
   const cat = `Category:${type}`;
   // Get up to 500 pages in the category
-  const api = `https://deadbydaylight.fandom.com/api.php?action=query&format=json&list=categorymembers&cmtitle=${encodeURIComponent(cat)}&cmlimit=500`;
+  const api = `https://deadbydaylight.fandom.com/api.php?action=query&format=json&list=categorymembers&cmtitle=${encodeURIComponent(cat)}&cmlimit=500&origin=*`;
   const res = await fetch(api);
   if (!res.ok) throw new Error(`Fandom category fetch HTTP ${res.status}`);
   const body = await res.json();
@@ -360,7 +360,7 @@ function processImageQueue() {
   (async () => {
     try {
       const q = encodeURIComponent(title.replace(/\s+/g, "_"));
-      const url = `https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=${q}`;
+      const url = `https://deadbydaylight.fandom.com/api.php?action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=600&titles=${q}&origin=*`;
       const res = await fetch(url);
       let thumb = null;
       if (res.ok) {

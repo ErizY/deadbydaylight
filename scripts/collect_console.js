@@ -33,7 +33,7 @@ const puppeteer = require('puppeteer');
       if (sel === '#search') {
         await page.focus(sel);
         await page.keyboard.type('Trapper');
-        await page.waitForTimeout(300);
+        await new Promise(r => setTimeout(r, 300));
       } else {
         const el = await page.$(sel);
         if (el) {
