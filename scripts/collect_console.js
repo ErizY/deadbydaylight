@@ -50,7 +50,8 @@ const puppeteer = require('puppeteer');
     }
   }
 
-  // Dump some DOM states
+  // Dump some DOM states (wait a bit to let UI settle)
+  await page.waitForTimeout(500);
   const syncStatus = await page.$eval('#sync-status', el => el.textContent).catch(()=>null);
   out.push({type:'dom', selector:'#sync-status', text: syncStatus});
   const killerCount = await page.$$eval('.killer-card', els => els.length).catch(()=>null);
